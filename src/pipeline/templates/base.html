@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}B站知识库 Pipeline{% endblock %}</title>
+<style>
+  body { font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+         max-width: 1000px; margin: 0 auto; padding: 1rem 1.5rem; color: #222; }
+  nav { border-bottom: 1px solid #ddd; padding-bottom: .6rem; margin-bottom: 1.2rem; }
+  nav a { margin-right: 1.2rem; text-decoration: none; color: #06c; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { border: 1px solid #ddd; padding: .4rem .6rem; text-align: left; }
+  th { background: #f6f6f6; }
+  textarea { width: 100%; box-sizing: border-box; font-family: inherit; }
+  button { cursor: pointer; }
+  .status-done { color: #080; } .status-failed { color: #c00; }
+  .status-pending, .status-transcribing, .status-distilling { color: #b60; }
+  pre.transcript { background: #f8f8f8; padding: 1rem; overflow-x: auto;
+                   white-space: pre-wrap; border: 1px solid #eee; }
+  .muted { color: #888; font-size: .85rem; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/admin">任务</a>
+  <a href="/admin/review">审核队列</a>
+</nav>
+{% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}任务 #{{ task.id }}{% endblock %}
+{% block content %}
+<h2>任务 #{{ task.id }}</h2>
+<table>
+  <tr><th>链接</th><td>{{ task.url }}</td></tr>
+  <tr><th>状态</th><td class="status-{{ task.status }}">{{ status_doc.get(task.status, task.status) }}</td></tr>
+  <tr><th>来源</th><td>{{ task.source }}</td></tr>
+  <tr><th>尝试次数</th><td>{{ task.attempts }}</td></tr>
+  {% if task.error %}<tr><th>错误</th><td>{{ task.error }}</td></tr>{% endif %}
+  {% if result %}<tr><th>产出</th><td>{{ result.video_count }} 个视频</td></tr>{% endif %}
+</table>
+
+{% for p in previews %}
+<h3>逐字稿（来源：{{ p.source }}）<span class="muted">{{ p.path }}</span></h3>
+<pre class="transcript">{{ p.text }}</pre>
+{% else %}
+<p class="muted">尚无逐字稿产出</p>
+{% endfor %}
+{% endblock %}

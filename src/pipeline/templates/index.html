@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>提交任务</h2>
+<form method="post" action="/admin/tasks">
+  <textarea name="urls" rows="4" placeholder="每行一条：B 站链接 / BV 号 / b23.tv 短链 / 合集链接"></textarea>
+  <p>
+    <label><input type="checkbox" name="distill" value="true"> 完成后进行 AI 知识提炼（M3 上线后生效）</label>
+    <button type="submit">批量提交</button>
+  </p>
+</form>
+
+<h2>任务列表</h2>
+<p class="muted">
+  筛选：<a href="/admin">全部</a>
+  {% for s, doc in status_doc.items() %} · <a href="/admin?status={{ s }}">{{ doc }}</a>{% endfor %}
+</p>
+<table>
+  <tr><th>#</th><th>链接</th><th>状态</th><th>来源</th><th>尝试</th><th>更新时间</th><th>操作</th></tr>
+  {% for t in tasks %}
+  <tr>
+    <td><a href="/admin/tasks/{{ t.id }}">{{ t.id }}</a></td>
+    <td>{{ t.url[:60] }}</td>
+    <td class="status-{{ t.status }}">{{ status_doc.get(t.status, t.status) }}
+        {% if t.error %}<span class="muted" title="{{ t.error }}">⚠</span>{% endif %}</td>
+    <td>{{ t.source }}</td>
+    <td>{{ t.attempts }}</td>
+    <td>{{ t.updated_at }}</td>
+    <td>{% if t.status == 'failed' %}
+      <form method="post" action="/admin/tasks/{{ t.id }}/retry" style="display:inline">
+        <button type="submit">重试</button></form>
+    {% endif %}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="muted">暂无任务</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

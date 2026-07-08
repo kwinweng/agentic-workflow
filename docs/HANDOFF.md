@@ -5,8 +5,8 @@
 
 ## 当前状态
 
-- **阶段**：M1 代码完成（21 个单测全过），待真实联调；下一步 M2
-- **最后更新**：2026-07-08 by Claude（自动续开发第 1 轮）
+- **阶段**：M1、M2 代码完成（38 个单测全过 + 真实进程冒烟通过）；下一步 M3
+- **最后更新**：2026-07-08 by Claude（自动续开发第 2 轮）
 - **分支**：`claude/bilibili-transcription-pipeline-27xuyu`
 
 ## 任务板（M1 · 转写核心）
@@ -27,10 +27,21 @@
 
 | 任务 | 状态 | 认领 |
 | --- | --- | --- |
-| 任务表即队列的 asyncio worker（重启恢复、失败重试） | 🔒 进行中(Claude) | Claude |
-| REST API（提交/列表/详情/重试） | 🔒 进行中(Claude) | Claude |
-| 后台页面：任务提交（批量）、任务列表、成果详情（逐字稿预览） | 🔒 进行中(Claude) | Claude |
-| 审核队列页骨架 | 🔒 进行中(Claude) | Claude |
+| 任务表即队列的 asyncio worker（重启恢复、失败重试） | ✅ 完成 | Claude |
+| REST API（提交/列表/详情/重试） | ✅ 完成 | Claude |
+| 后台页面：任务提交（批量）、任务列表、成果详情（逐字稿预览） | ✅ 完成 | Claude |
+| 审核队列页骨架 | ✅ 完成 | Claude |
+
+## 任务板（M3 · AI 知识提炼）
+
+| 任务 | 状态 | 认领 |
+| --- | --- | --- |
+| OpenAI 兼容 LLM 客户端（DeepSeek/Qwen 切换）+ 长文本分块 | 待办 | - |
+| 清洗 prompt + cleaned.md | 待办 | - |
+| skill 草稿生成（SKILL.md 格式见产品定稿 spec §3）+ project-context 机制 | 待办 | - |
+| drafts → 审核 → skills 状态流转 + INDEX.md 索引 | 待办 | - |
+| 后台审核队列页启用（采纳/退回/丢弃） | 待办 | - |
+| worker 接入 distill 步骤（任务 options.distill=true 时执行） | 待办 | - |
 
 M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆到此表。
 
@@ -67,3 +78,9 @@ M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
   db/app）、wbi 签名（过官方测试向量）、BiliClient（限频+字幕+合集）、resolver、
   transcriber（字幕优先+ASR 兜底，引擎可插拔）、storage 落盘、CLI。21 个单测全过。
   M1 真实联调阻塞于 SESSDATA 与网络环境。下一步：M2 任务队列 + REST API。
+- 2026-07-08 Claude（自动续开发第 2 轮）：完成 M2——service 层（任务表即队列，幂等建任务/
+  原子认领/失败重试≤3次/重启恢复）、asyncio worker（runner 可注入）、REST API、
+  管理后台（提交/列表/详情+逐字稿预览/审核队列骨架，Jinja2 服务端渲染）。
+  38 个单测全过；uvicorn 真实进程冒烟验证了「提交→认领→重试→failed」全链路。
+  M3 任务已拆入任务板。下一步：M3 AI 知识提炼（阻塞项：LLM API Key 与
+  project-context.md 仍未提供，开发可先 mock LLM，真实提炼需等密钥）。

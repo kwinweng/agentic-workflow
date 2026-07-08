@@ -12,8 +12,10 @@ CREATE TABLE IF NOT EXISTS tasks (
     source TEXT NOT NULL DEFAULT 'admin',      -- feishu | admin | cli
     options_json TEXT NOT NULL DEFAULT '{}',
     status TEXT NOT NULL DEFAULT 'pending',
-    -- pending|downloading|transcribing|distilling|done|failed
+    -- pending|transcribing|distilling|done|failed
     error TEXT,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    result_json TEXT,                          -- 完成后的产物摘要（视频数/落盘路径等）
     feishu_chat_id TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -42,9 +44,17 @@ CREATE TABLE IF NOT EXISTS skills (
 """
 
 
+def connect(db_path: Path) -> sqlite3.Connection:
+    """每次操作开新连接（sqlite 单机足够），WAL 模式支持 worker 与 API 并发读写。"""
+    conn = sqlite3.connect(db_path, timeout=10)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
+    return conn
+
+
 def init_db(db_path: Path) -> sqlite3.Connection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    conn = connect(db_path)
     conn.executescript(SCHEMA)
     return conn

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}审核队列{% endblock %}
+{% block content %}
+<h2>Skill 草稿审核队列</h2>
+<p class="muted">M3 上线后，AI 提炼出的 skill 草稿在此审核：采纳后移入 knowledge-base/skills/ 正式生效。</p>
+<table>
+  <tr><th>#</th><th>名称</th><th>标题</th><th>路径</th><th>创建时间</th><th>操作</th></tr>
+  {% for d in drafts %}
+  <tr>
+    <td>{{ d.id }}</td><td>{{ d.name }}</td><td>{{ d.title }}</td>
+    <td class="muted">{{ d.md_path }}</td><td>{{ d.created_at }}</td>
+    <td class="muted">采纳 / 退回（M3 实现）</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="muted">暂无待审核草稿</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
