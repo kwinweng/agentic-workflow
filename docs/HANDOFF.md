@@ -36,12 +36,12 @@
 
 | 任务 | 状态 | 认领 |
 | --- | --- | --- |
-| OpenAI 兼容 LLM 客户端（DeepSeek/Qwen 切换）+ 长文本分块 | 待办 | - |
-| 清洗 prompt + cleaned.md | 待办 | - |
-| skill 草稿生成（SKILL.md 格式见产品定稿 spec §3）+ project-context 机制 | 待办 | - |
-| drafts → 审核 → skills 状态流转 + INDEX.md 索引 | 待办 | - |
-| 后台审核队列页启用（采纳/退回/丢弃） | 待办 | - |
-| worker 接入 distill 步骤（任务 options.distill=true 时执行） | 待办 | - |
+| OpenAI 兼容 LLM 客户端（DeepSeek/Qwen 切换）+ 长文本分块 | 🔒 进行中(Claude) | Claude |
+| 清洗 prompt + cleaned.md | 🔒 进行中(Claude) | Claude |
+| skill 草稿生成（SKILL.md 格式见产品定稿 spec §3）+ project-context 机制 | 🔒 进行中(Claude) | Claude |
+| drafts → 审核 → skills 状态流转 + INDEX.md 索引 | 🔒 进行中(Claude) | Claude |
+| 后台审核队列页启用（采纳/退回/丢弃） | 🔒 进行中(Claude) | Claude |
+| worker 接入 distill 步骤（任务 options.distill=true 时执行） | 🔒 进行中(Claude) | Claude |
 
 M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆到此表。
 
