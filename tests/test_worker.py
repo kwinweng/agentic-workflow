@@ -72,6 +72,39 @@ async def test_worker_recovers_stuck_task_on_start(settings):
     )
 
 
+@pytest.mark.anyio
+async def test_worker_notifier_called_on_done_and_final_failure(settings):
+    ids = service.create_tasks(settings.db_path, ["BV1aa411c7XX", "BV1bb411c7XX"])
+    notifications: list[tuple[int, str]] = []
+
+    def runner(task, _settings):
+        if task["url"] == "BV1aa411c7XX":
+            return {"video_count": 1, "videos": [], "bvid": "a", "title": "t"}
+        raise RuntimeError("always fails")
+
+    def notifier(task, result, outcome):
+        notifications.append((task["id"], outcome))
+
+    async def all_settled():
+        stop = asyncio.Event()
+        t = asyncio.create_task(
+            worker_loop(settings, runner=runner, notifier=notifier, stop_event=stop)
+        )
+        async with asyncio.timeout(10):
+            while True:
+                statuses = {x["status"] for x in service.list_tasks(settings.db_path)}
+                if statuses == {"done", "failed"}:
+                    break
+                await asyncio.sleep(0.05)
+        stop.set()
+        await t
+
+    await all_settled()
+    # done 通知 1 次；failed 仅在重试耗尽的最后一次通知 1 次
+    assert notifications.count((ids[0], "done")) == 1
+    assert notifications.count((ids[1], "failed")) == 1
+
+
 @pytest.fixture
 def anyio_backend():
     return "asyncio"

@@ -30,6 +30,11 @@ CREATE TABLE IF NOT EXISTS transcripts (
     duration_sec INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS feishu_events (
+    event_id TEXT PRIMARY KEY,                 -- 飞书事件去重
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS skills (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     task_id INTEGER REFERENCES tasks(id),

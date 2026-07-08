@@ -5,7 +5,7 @@
 
 ## 当前状态
 
-- **阶段**：M1~M3 代码完成（58 个单测全过）；M4 进行中(Claude)
+- **阶段**：M1~M4 代码完成（68 个单测全过）；下一步 M5（图文稿+部署）
 - **最后更新**：2026-07-08 by Claude（连续开发模式）
 - **分支**：`claude/bilibili-transcription-pipeline-27xuyu`
 
@@ -48,10 +48,11 @@
 
 | 任务 | 状态 | 认领 |
 | --- | --- | --- |
-| lark-oapi 长连接接入 + 消息提取 B 站链接 + 事件去重 | 🔒 进行中(Claude) | Claude |
-| 受理回执 + 完成通知卡片（含 skill 草稿数与落盘路径） | 🔒 进行中(Claude) | Claude |
-| 卡片「采纳/退回」审核按钮（与后台同一状态机） | 🔒 进行中(Claude) | Claude |
-| 群聊 @ 与私聊两种场景 | 🔒 进行中(Claude) | Claude |
+| lark-oapi 长连接接入 + 消息提取 B 站链接 + 事件去重 | ✅ 完成 | Claude |
+| 受理回执 + 完成通知卡片（含 skill 草稿数与落盘路径） | ✅ 完成 | Claude |
+| 卡片「采纳/退回」审核按钮（与后台同一状态机） | ✅ 完成 | Claude |
+| 群聊 @ 与私聊两种场景 | ✅ 完成(消息处理不区分场景，@提及文本同样被解析) | Claude |
+| M4 真实验收（真实飞书应用联调） | ⛔ 阻塞(需飞书 App ID/Secret) | - |
 
 M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆到此表。
 
@@ -100,3 +101,10 @@ M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
   drafts→approve/reject 状态流转（文件移动+frontmatter 同步+INDEX.md 重建）、
   后台审核队列页（全文预览+采纳/退回按钮）、runner 集成 options.distill
   （无 API Key 时优雅跳过不失败）。58 个单测全过。继续 M4 飞书机器人。
+- 2026-07-08 Claude（连续开发）：完成 M4——feishu_bot 模块：链接提取（视频/短链/合集/
+  裸BV，去重保序）、事件去重表、handle_message（受理回执+source=feishu+distill 默认开）、
+  完成通知卡片（逐字稿来源+落盘路径+每个 skill 草稿的采纳/退回按钮）、失败通知、
+  handle_card_action（与后台同一 skills_store 状态机）、worker notifier 钩子
+  （done 通知一次/重试耗尽才通知 failed）。lark-oapi 为可选依赖 .[feishu]，
+  SDK 接线集中在 serve()（长连接+worker 同进程），业务逻辑纯函数全覆盖测试。
+  68 个单测全过。真实联调需飞书凭据。
