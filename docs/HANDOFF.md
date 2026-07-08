@@ -13,12 +13,12 @@
 
 | 任务 | 状态 | 认领 |
 | --- | --- | --- |
-| 项目脚手架（FastAPI 工程、配置加载、SQLite 迁移、.env.example） | 待办 | - |
-| resolver：BV / b23.tv / 分P / 合集展开 | 待办 | - |
-| transcriber-A：字幕直抓（wbi 签名 + SESSDATA + 限频 + CC/AI 字幕解析） | 待办 | - |
-| transcriber-B：BBDown 音频下载 + faster-whisper（引擎可插拔） | 待办 | - |
-| 统一 Transcript 结构 + transcript.md/json 落盘 | 待办 | - |
-| CLI 批量入口 | 待办 | - |
+| 项目脚手架（FastAPI 工程、配置加载、SQLite 迁移、.env.example） | 🔒 进行中(Claude) | Claude |
+| resolver：BV / b23.tv / 分P / 合集展开 | 🔒 进行中(Claude) | Claude |
+| transcriber-A：字幕直抓（wbi 签名 + SESSDATA + 限频 + CC/AI 字幕解析） | 🔒 进行中(Claude) | Claude |
+| transcriber-B：BBDown 音频下载 + faster-whisper（引擎可插拔） | 🔒 进行中(Claude) | Claude |
+| 统一 Transcript 结构 + transcript.md/json 落盘 | 🔒 进行中(Claude) | Claude |
+| CLI 批量入口 | 🔒 进行中(Claude) | Claude |
 
 状态取值：`待办` / `🔒 进行中(代理名)` / `✅ 完成(commit)` / `⛔ 阻塞(原因)`
 
