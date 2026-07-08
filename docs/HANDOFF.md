@@ -56,6 +56,16 @@
 
 M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆到此表。
 
+## 任务板（M5 · 图文稿 + 打磨与部署）
+
+| 任务 | 状态 | 认领 |
+| --- | --- | --- |
+| snapshotter：视频下载 + ffmpeg 按段落抽帧 → article.md 图文稿 | 🔒 进行中(Claude) | Claude |
+| 后台接入图文稿（提交选项 + 详情展示） | 🔒 进行中(Claude) | Claude |
+| 简单鉴权（后台访问口令） + 失败告警 | 🔒 进行中(Claude) | Claude |
+| Docker Compose 一键部署 | 🔒 进行中(Claude) | Claude |
+| 使用文档 | 🔒 进行中(Claude) | Claude |
+
 ## 开发环境注意（给所有代理）
 
 - `uv venv .venv && uv pip install -e ".[dev]"`，测试 `.venv/bin/pytest`
