@@ -12,7 +12,8 @@ from .config import Settings
 from .distiller import distill_video
 from .llm import ChatLLM, OpenAICompatLLM
 from .resolver import resolve
-from .service import add_skill, add_transcript, set_task_status
+from .service import add_article, add_skill, add_transcript, set_task_status
+from .snapshotter import build_article
 from .storage import render_markdown, save_transcript
 from .transcriber import get_transcript
 from .transcriber.asr import AsrEngine, create_engine
@@ -78,11 +79,30 @@ def run_task(task: dict, settings: Settings, *, llm: ChatLLM | None = None) -> d
             "title": outputs[0]["title"],
         }
 
+        if options.get("article"):
+            result["articles"] = _build_articles(task, settings, transcripts)
         if options.get("distill"):
             result["skills"] = _distill_all(task, settings, transcripts, llm)
         return result
     finally:
         client.close()
+
+
+def _build_articles(task: dict, settings: Settings, transcripts: list) -> list[dict]:
+    """图文稿步骤：单个视频失败不阻塞其余视频，失败原因记入结果。"""
+    articles = []
+    for video, transcript in transcripts:
+        try:
+            path, image_count = build_article(
+                video, transcript, settings.kb_root, settings.work_dir,
+                downloader=settings.downloader,
+            )
+            add_article(settings.db_path, task["id"], str(path), image_count)
+            articles.append({"bvid": video.bvid, "path": str(path), "images": image_count})
+        except Exception as e:
+            logger.warning("任务 #%s %s 图文稿生成失败", task["id"], video.bvid, exc_info=True)
+            articles.append({"bvid": video.bvid, "error": f"{type(e).__name__}: {e}"})
+    return articles
 
 
 def _distill_all(task: dict, settings: Settings, transcripts: list, llm: ChatLLM | None) -> dict:

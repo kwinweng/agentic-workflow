@@ -198,7 +198,8 @@ def serve(settings: Settings | None = None) -> None:  # pragma: no cover - 需�
     )
 
     def notifier(task: dict, result: dict | None, outcome: str) -> None:
-        chat_id = task.get("feishu_chat_id")
+        # 非飞书来源（后台提交）的任务，失败/完成通知发到告警群（若配置）
+        chat_id = task.get("feishu_chat_id") or settings.feishu_alert_chat_id
         if not chat_id:
             return
         if outcome == "done" and result is not None:

@@ -4,7 +4,8 @@
 <form method="post" action="/admin/tasks">
   <textarea name="urls" rows="4" placeholder="每行一条：B 站链接 / BV 号 / b23.tv 短链 / 合集链接"></textarea>
   <p>
-    <label><input type="checkbox" name="distill" value="true"> 完成后进行 AI 知识提炼（M3 上线后生效）</label>
+    <label><input type="checkbox" name="distill" value="true" checked> AI 知识提炼（skill 草稿入审核队列）</label>
+    <label><input type="checkbox" name="article" value="true"> 生成图文稿（需下载视频流，较慢）</label>
     <button type="submit">批量提交</button>
   </p>
 </form>

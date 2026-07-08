@@ -48,6 +48,23 @@ def create_app(settings: Settings | None = None, *, enable_worker: bool = True) 
 
     app = FastAPI(title="bili-knowledge-pipeline", lifespan=lifespan)
 
+    if settings.admin_token:
+        @app.middleware("http")
+        async def require_token(request: Request, call_next):
+            if request.url.path != "/healthz":
+                supplied = (
+                    request.headers.get("X-Admin-Token")
+                    or request.query_params.get("token")
+                    or request.cookies.get("admin_token")
+                )
+                if supplied != settings.admin_token:
+                    from fastapi.responses import JSONResponse
+                    return JSONResponse({"detail": "unauthorized"}, status_code=401)
+            response = await call_next(request)
+            if request.query_params.get("token") == settings.admin_token:
+                response.set_cookie("admin_token", settings.admin_token, httponly=True)
+            return response
+
     # ---- REST API ---------------------------------------------------------
 
     @app.get("/healthz")
@@ -97,11 +114,14 @@ def create_app(settings: Settings | None = None, *, enable_worker: bool = True) 
         })
 
     @app.post("/admin/tasks")
-    def admin_submit(urls: str = Form(...), distill: bool = Form(False)):
+    def admin_submit(
+        urls: str = Form(...), distill: bool = Form(False), article: bool = Form(False)
+    ):
         url_list = [u.strip() for u in urls.splitlines() if u.strip()]
         if url_list:
             service.create_tasks(
-                settings.db_path, url_list, source="admin", options={"distill": distill}
+                settings.db_path, url_list, source="admin",
+                options={"distill": distill, "article": article},
             )
         return RedirectResponse("/admin", status_code=303)
 
@@ -121,8 +141,14 @@ def create_app(settings: Settings | None = None, *, enable_worker: bool = True) 
             md_path = Path(t["md_path"])
             text = md_path.read_text(encoding="utf-8") if md_path.exists() else "(文件不存在)"
             previews.append({"source": t["source"], "path": t["md_path"], "text": text})
+        articles = []
+        for a in task["articles"]:
+            md_path = Path(a["md_path"])
+            text = md_path.read_text(encoding="utf-8") if md_path.exists() else "(文件不存在)"
+            articles.append({"path": a["md_path"], "images": a["image_count"], "text": text})
         return templates.TemplateResponse(request, "task_detail.html", {
-            "task": task, "result": result, "previews": previews, "status_doc": STATUS_DOC,
+            "task": task, "result": result, "previews": previews,
+            "articles": articles, "status_doc": STATUS_DOC,
         })
 
     @app.get("/admin/review")

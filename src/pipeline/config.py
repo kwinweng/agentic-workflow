@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     # 飞书（M4 使用）
     feishu_app_id: str = ""
     feishu_app_secret: str = ""
+    feishu_alert_chat_id: str = ""   # 任务失败告警群（后台来源任务也会通知到这里）
+
+    # 管理后台
+    admin_token: str = ""            # 设置后 /admin 与 /api 需携带口令（X-Admin-Token 头或 ?token=）
 
     # 存储
     kb_root: Path = Path("./knowledge-base")

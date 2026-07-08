@@ -114,6 +114,11 @@ def get_task(db_path: Path, task_id: int) -> dict | None:
                 "SELECT * FROM transcripts WHERE task_id=?", (task_id,)
             ).fetchall()
         ]
+        task["articles"] = [
+            dict(a) for a in conn.execute(
+                "SELECT * FROM articles WHERE task_id=?", (task_id,)
+            ).fetchall()
+        ]
         return task
 
 
@@ -146,6 +151,14 @@ def list_skill_drafts(db_path: Path) -> list[dict]:
             "SELECT * FROM skills WHERE status='draft' ORDER BY id DESC"
         ).fetchall()
         return [dict(r) for r in rows]
+
+
+def add_article(db_path: Path, task_id: int, md_path: str, image_count: int) -> None:
+    with db.connect(db_path) as conn:
+        conn.execute(
+            "INSERT INTO articles (task_id, md_path, image_count) VALUES (?,?,?)",
+            (task_id, md_path, image_count),
+        )
 
 
 def add_skill(db_path: Path, task_id: int, name: str, title: str, md_path: str) -> int:

@@ -17,4 +17,9 @@
 {% else %}
 <p class="muted">尚无逐字稿产出</p>
 {% endfor %}
+
+{% for a in articles %}
+<h3>图文稿（{{ a.images }} 张截图）<span class="muted">{{ a.path }}</span></h3>
+<pre class="transcript">{{ a.text }}</pre>
+{% endfor %}
 {% endblock %}

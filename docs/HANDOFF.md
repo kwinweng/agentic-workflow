@@ -5,7 +5,7 @@
 
 ## 当前状态
 
-- **阶段**：M1~M4 代码完成（68 个单测全过）；下一步 M5（图文稿+部署）
+- **阶段**：**M1~M5 全部编码完成**（76 个单测全过）；剩余工作=真实环境联调验收（见阻塞项）
 - **最后更新**：2026-07-08 by Claude（连续开发模式）
 - **分支**：`claude/bilibili-transcription-pipeline-27xuyu`
 
@@ -60,11 +60,11 @@ M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
 
 | 任务 | 状态 | 认领 |
 | --- | --- | --- |
-| snapshotter：视频下载 + ffmpeg 按段落抽帧 → article.md 图文稿 | 🔒 进行中(Claude) | Claude |
-| 后台接入图文稿（提交选项 + 详情展示） | 🔒 进行中(Claude) | Claude |
-| 简单鉴权（后台访问口令） + 失败告警 | 🔒 进行中(Claude) | Claude |
-| Docker Compose 一键部署 | 🔒 进行中(Claude) | Claude |
-| 使用文档 | 🔒 进行中(Claude) | Claude |
+| snapshotter：视频下载 + ffmpeg 按段落抽帧 → article.md 图文稿 | ✅ 完成 | Claude |
+| 后台接入图文稿（提交选项 + 详情展示） | ✅ 完成 | Claude |
+| 简单鉴权（后台访问口令） + 失败告警 | ✅ 完成 | Claude |
+| Docker Compose 一键部署 | ✅ 完成(镜像构建未在本环境验证，Docker 不可用) | Claude |
+| 使用文档 | ✅ 完成(docs/04) | Claude |
 
 ## 开发环境注意（给所有代理）
 
@@ -118,3 +118,10 @@ M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
   （done 通知一次/重试耗尽才通知 failed）。lark-oapi 为可选依赖 .[feishu]，
   SDK 接线集中在 serve()（长连接+worker 同进程），业务逻辑纯函数全覆盖测试。
   68 个单测全过。真实联调需飞书凭据。
+- 2026-07-08 Claude（连续开发）：完成 M5——snapshotter（视频下载+ffmpeg 抽帧可注入、
+  段落起点稀释 min_gap、抽帧失败不阻塞整篇）、articles 表补进 schema（M1 遗漏，
+  引发 10 个测试失败已修复）、后台图文稿选项与详情预览、admin_token 鉴权中间件
+  （header/query/cookie 三通道，/healthz 豁免）、失败告警群 FEISHU_ALERT_CHAT_ID、
+  Dockerfile + docker-compose（admin 与 feishu 双服务共库，feishu 用 profile 开关）、
+  docs/04 部署与使用文档、README 状态更新。76 个单测全过。
+  **全部里程碑编码完成**，剩余为真实环境联调（需 SESSDATA/LLM Key/飞书凭据）。

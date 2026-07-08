@@ -1,0 +1,32 @@
+services:
+  # 管理后台 + 任务 worker
+  admin:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      KB_ROOT: /data/knowledge-base
+      DB_PATH: /data/pipeline.db
+      WORK_DIR: /data/work
+    volumes:
+      - ./data:/data
+      - whisper-cache:/root/.cache
+
+  # 飞书机器人（长连接 + 自带 worker）。与 admin 共用同一 /data。
+  # 注意：两个服务各带一个 worker，SQLite 原子认领保证不会重复处理同一任务。
+  feishu:
+    build: .
+    command: ["python", "-m", "pipeline.feishu_bot"]
+    env_file: .env
+    environment:
+      KB_ROOT: /data/knowledge-base
+      DB_PATH: /data/pipeline.db
+      WORK_DIR: /data/work
+    volumes:
+      - ./data:/data
+      - whisper-cache:/root/.cache
+    profiles: ["feishu"]   # 配好飞书凭据后：docker compose --profile feishu up -d
+
+volumes:
+  whisper-cache:
