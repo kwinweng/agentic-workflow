@@ -30,6 +30,7 @@ M2~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
 | --- | --- | --- |
 | B 站账号 SESSDATA | transcriber-A 真实联调（开发和单测可先 mock） | 未提供 |
 | DeepSeek/Qwen API Key | M3 才需要 | 未提供 |
+| 项目背景描述（project-context.md，200~500 字） | M3 提炼相关性判断 | 未提供 |
 | 飞书 App ID/Secret | M4 才需要 | 未提供 |
 
 ## 待人工决策
@@ -40,3 +41,7 @@ M2~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
 
 - 2026-07-08 Claude：完成调研（docs/01）、架构设计（docs/02）、实施计划（docs/03），
   搭好协作机制（AGENTS.md + 本文件 + 每小时自动续开发 Routine）。代码未开始。
+- 2026-07-08 Claude：与需求方 brainstorming 定稿产品方向——知识产出改为
+  **AI 可加载的 Agent Skills**（drafts 草稿区 + 人工审核门禁），图文稿后置到 M5。
+  详见 docs/superpowers/specs/2026-07-08-knowledge-skills-design.md，
+  docs/03 里程碑已同步修订。**所有代理实现 M3 时以该 spec 为准。**
