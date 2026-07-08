@@ -146,3 +146,30 @@ def list_skill_drafts(db_path: Path) -> list[dict]:
             "SELECT * FROM skills WHERE status='draft' ORDER BY id DESC"
         ).fetchall()
         return [dict(r) for r in rows]
+
+
+def add_skill(db_path: Path, task_id: int, name: str, title: str, md_path: str) -> int:
+    """登记 skill 草稿。同名 draft 已存在时更新其文件路径与标题（重跑覆盖）。"""
+    with db.connect(db_path) as conn:
+        row = conn.execute(
+            "SELECT id FROM skills WHERE name=? AND status='draft'", (name,)
+        ).fetchone()
+        if row:
+            conn.execute(
+                "UPDATE skills SET task_id=?, title=?, md_path=? WHERE id=?",
+                (task_id, title, md_path, row["id"]),
+            )
+            return row["id"]
+        cur = conn.execute(
+            "INSERT INTO skills (task_id, name, title, md_path) VALUES (?,?,?,?)",
+            (task_id, name, title, md_path),
+        )
+        return cur.lastrowid
+
+
+def set_task_status(db_path: Path, task_id: int, status: str) -> None:
+    with db.connect(db_path) as conn:
+        conn.execute(
+            "UPDATE tasks SET status=?, updated_at=datetime('now') WHERE id=?",
+            (status, task_id),
+        )

@@ -75,3 +75,31 @@ def test_admin_form_submit_and_detail_preview(client):
 
 def test_task_detail_404(client):
     assert client.get("/api/tasks/999").status_code == 404
+
+
+def test_review_approve_and_reject_flow(client):
+    from pipeline import service
+    from pipeline.distiller import SkillDraft, render_skill_md
+
+    def make(name):
+        d = SkillDraft(name=name, title="标题", description="当…时使用", body="正文")
+        ddir = client.settings.kb_root / "drafts" / name
+        ddir.mkdir(parents=True)
+        (ddir / "SKILL.md").write_text(render_skill_md(d, VIDEO), encoding="utf-8")
+        [tid] = service.create_tasks(client.settings.db_path, [f"https://b23.tv/{name}"])
+        return service.add_skill(client.settings.db_path, tid, name, "标题", str(ddir / "SKILL.md"))
+
+    sid_a, sid_b = make("skill-a"), make("skill-b")
+
+    page = client.get("/admin/review").text
+    assert "skill-a" in page and "采纳" in page
+
+    r = client.post(f"/admin/skills/{sid_a}/approve", follow_redirects=False)
+    assert r.status_code == 303
+    assert (client.settings.kb_root / "skills" / "skill-a" / "SKILL.md").exists()
+
+    assert client.post(f"/admin/skills/{sid_b}/reject", follow_redirects=False).status_code == 303
+    assert client.post(f"/admin/skills/{sid_b}/reject", follow_redirects=False).status_code == 409
+
+    drafts = client.get("/api/skills/drafts").json()["drafts"]
+    assert drafts == []

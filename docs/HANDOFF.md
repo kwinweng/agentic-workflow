@@ -5,8 +5,8 @@
 
 ## 当前状态
 
-- **阶段**：M1、M2 代码完成（38 个单测全过 + 真实进程冒烟通过）；下一步 M3
-- **最后更新**：2026-07-08 by Claude（自动续开发第 2 轮）
+- **阶段**：M1~M3 代码完成（58 个单测全过）；M4 进行中(Claude)
+- **最后更新**：2026-07-08 by Claude（连续开发模式）
 - **分支**：`claude/bilibili-transcription-pipeline-27xuyu`
 
 ## 任务板（M1 · 转写核心）
@@ -36,12 +36,22 @@
 
 | 任务 | 状态 | 认领 |
 | --- | --- | --- |
-| OpenAI 兼容 LLM 客户端（DeepSeek/Qwen 切换）+ 长文本分块 | 🔒 进行中(Claude) | Claude |
-| 清洗 prompt + cleaned.md | 🔒 进行中(Claude) | Claude |
-| skill 草稿生成（SKILL.md 格式见产品定稿 spec §3）+ project-context 机制 | 🔒 进行中(Claude) | Claude |
-| drafts → 审核 → skills 状态流转 + INDEX.md 索引 | 🔒 进行中(Claude) | Claude |
-| 后台审核队列页启用（采纳/退回/丢弃） | 🔒 进行中(Claude) | Claude |
-| worker 接入 distill 步骤（任务 options.distill=true 时执行） | 🔒 进行中(Claude) | Claude |
+| OpenAI 兼容 LLM 客户端（DeepSeek/Qwen 切换）+ 长文本分块 | ✅ 完成 | Claude |
+| 清洗 prompt + cleaned.md | ✅ 完成 | Claude |
+| skill 草稿生成（SKILL.md 格式见产品定稿 spec §3）+ project-context 机制 | ✅ 完成 | Claude |
+| drafts → 审核 → skills 状态流转 + INDEX.md 索引 | ✅ 完成 | Claude |
+| 后台审核队列页启用（采纳/退回，含草稿全文预览） | ✅ 完成 | Claude |
+| worker 接入 distill 步骤（任务 options.distill=true 时执行） | ✅ 完成 | Claude |
+| M3 真实验收（真实视频跑全链路产出可加载 skill） | ⛔ 阻塞(需 LLM API Key + project-context.md) | - |
+
+## 任务板（M4 · 飞书机器人）
+
+| 任务 | 状态 | 认领 |
+| --- | --- | --- |
+| lark-oapi 长连接接入 + 消息提取 B 站链接 + 事件去重 | 🔒 进行中(Claude) | Claude |
+| 受理回执 + 完成通知卡片（含 skill 草稿数与落盘路径） | 🔒 进行中(Claude) | Claude |
+| 卡片「采纳/退回」审核按钮（与后台同一状态机） | 🔒 进行中(Claude) | Claude |
+| 群聊 @ 与私聊两种场景 | 🔒 进行中(Claude) | Claude |
 
 M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆到此表。
 
@@ -84,3 +94,9 @@ M3~M5 任务见 `docs/03-实施计划.md`，进入相应里程碑时把任务拆
   38 个单测全过；uvicorn 真实进程冒烟验证了「提交→认领→重试→failed」全链路。
   M3 任务已拆入任务板。下一步：M3 AI 知识提炼（阻塞项：LLM API Key 与
   project-context.md 仍未提供，开发可先 mock LLM，真实提炼需等密钥）。
+- 2026-07-08 Claude（连续开发）：完成 M3——OpenAI 兼容 LLM 客户端（DeepSeek/Qwen 配置
+  切换，MockTransport 测试）、chunk 分块、两段式提炼（清洗 prompt → skill 草稿 JSON，
+  容错解析+字段归一化）、SKILL.md 渲染（frontmatter 含触发 description/溯源/confidence）、
+  drafts→approve/reject 状态流转（文件移动+frontmatter 同步+INDEX.md 重建）、
+  后台审核队列页（全文预览+采纳/退回按钮）、runner 集成 options.distill
+  （无 API Key 时优雅跳过不失败）。58 个单测全过。继续 M4 飞书机器人。

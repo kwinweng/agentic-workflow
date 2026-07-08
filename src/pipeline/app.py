@@ -13,7 +13,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from . import service
+from . import service, skills_store
 from .config import Settings, get_settings
 from .db import init_db
 from .worker import worker_loop
@@ -128,7 +128,22 @@ def create_app(settings: Settings | None = None, *, enable_worker: bool = True) 
     @app.get("/admin/review")
     def admin_review(request: Request):
         drafts = service.list_skill_drafts(settings.db_path)
+        for d in drafts:
+            p = Path(d["md_path"])
+            d["preview"] = p.read_text(encoding="utf-8") if p.exists() else "(文件不存在)"
         return templates.TemplateResponse(request, "review.html", {"drafts": drafts})
+
+    @app.post("/admin/skills/{skill_id}/approve")
+    def admin_approve_skill(skill_id: int):
+        if not skills_store.approve_skill(settings.db_path, settings.kb_root, skill_id):
+            raise HTTPException(409, "仅 draft 状态的 skill 可采纳")
+        return RedirectResponse("/admin/review", status_code=303)
+
+    @app.post("/admin/skills/{skill_id}/reject")
+    def admin_reject_skill(skill_id: int):
+        if not skills_store.reject_skill(settings.db_path, skill_id):
+            raise HTTPException(409, "仅 draft 状态的 skill 可退回")
+        return RedirectResponse("/admin/review", status_code=303)
 
     return app
 
